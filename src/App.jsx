@@ -2,22 +2,14 @@ import React, {Component} from 'react';
 import ChatBar from './ChatBar.jsx';
 import MessageList from './MessageList.jsx';
 
+
 class App extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
-    currentUser: {name: "Bobby"},
-    messages: [
-    {
-      username: "Bobby",
-      content: "Where me marbles?",
-    },
-    {
-      username: "Anonymous",
-      content: "I took them from you and discarded them without remorse."
-    }
-        ]
+      currentUser: {name: "Bobby"},
+      messages: []
     };
     this.addMessage = this.addMessage.bind(this);
   }
@@ -27,25 +19,19 @@ class App extends Component {
     console.log('new WebSocket created');
 
     this.appSocket.onopen = (event) => {
-      this.appSocket.send("I just connected to you! lolol");
+      // this.appSocket.send("I just connected to you!");
     };
 
-    this.appSocket.onmessage= function(message){
-      console.log(message.data);
+    this.appSocket.onmessage = (event) => {
+      console.log(event.data);
+      let messages = this.state.messages.concat(event);
+      this.setState({messages});
     };
-
-    // setTimeout(() => {
-    //   const newMessage = {id: 3, username: "Michelle", content: "Hello there!"};
-    //   const messages = this.state.messages.concat(newMessage)
-    //   this.setState({messages})
-    // }, 5000);
   }
 
   addMessage(event) {
     if (event.key=='Enter') {
       let messageObj = {username: this.state.currentUser.name, content: event.target.value};
-      let messages = this.state.messages.concat(messageObj);
-      this.setState({messages: messages});
       this.appSocket.send(JSON.stringify(messageObj));
       event.target.value = "";
     } else {
@@ -53,10 +39,7 @@ class App extends Component {
     }
   }
 
-
-
   render() {
-    // console.log('addMessage from app', this.addMessage);
     return (
       <div>
         <MessageList messages={this.state.messages}></MessageList>
