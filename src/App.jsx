@@ -27,6 +27,7 @@ class App extends Component {
     let messages = this.state.messages.concat(messageObj);
     // console.log('this.state.messages', this.state.messages);
     this.setState({messages: messages});
+    appSocket.send(JSON.stringify(messageObj));
   }
 
   componentDidMount() {
