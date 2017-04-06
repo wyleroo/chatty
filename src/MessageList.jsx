@@ -7,8 +7,8 @@ class MessageList extends React.Component {
   render() {
     return (
       <main className="messages">
-        {this.props.messages.map(function(message){
-          return <Message key={message.content} username={message.username} content={message.content}></Message>
+        {this.props.messages.map(function(message) {
+          return <Message key={message.timestamp} username={message.username} content={message.content}></Message>
           }
         )};
         <div className="message system">

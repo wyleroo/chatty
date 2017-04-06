@@ -10,24 +10,24 @@ const server = express()
 
 const wss = new SocketServer({ server });
 
-wss.broadcast = function broadcast(data) {
-  wss.clients.forEach(function each(client) {
-    if (client.readyState == SocketServer.OPEN) {
-      client.send(data);
-    }
-  });
-};
-
 wss.on('connection', (ws) => {
   console.log('Client connected');
-  ws.send("Yo yo yo");
+  // ws.send("Yo yo yo");
 
   ws.on('message', function incoming(message) {
-    console.log('received: %s', message);
+    // Parse incoming message; add timestamp
     let inMessage = JSON.parse(message);
     let timestamp = uuid();
     inMessage.timestamp = timestamp;
-    wss.broadcast(inMessage);
+    // Broadcast message to all connected clients. Stringify;
+    wss.clients.forEach(function each(client) {
+      if (client.readyState == ws.OPEN) {
+        outMessage = JSON.stringify(inMessage);
+        client.send(outMessage);
+      } else {
+        console.log('No connection. No socketserver. No nothin');
+      }
+    });
   });
 
   ws.on('close', () => console.log('Client disconnected'));
