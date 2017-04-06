@@ -22,23 +22,23 @@ class App extends Component {
     this.addMessage = this.addMessage.bind(this);
   }
 
-    componentDidMount() {
-    const appSocket = new WebSocket("ws://localhost:3001");
+  componentDidMount() {
+    this.appSocket = new WebSocket("ws://localhost:3001");
     console.log('new WebSocket created');
 
-    appSocket.onopen = function (event) {
-      appSocket.send("I just connected to you! lolol");
+    this.appSocket.onopen = (event) => {
+      this.appSocket.send("I just connected to you! lolol");
     };
 
-    appSocket.onmessage= function(message){
+    this.appSocket.onmessage= function(message){
       console.log(message.data);
     };
 
-    setTimeout(() => {
-      const newMessage = {id: 3, username: "Michelle", content: "Hello there!"};
-      const messages = this.state.messages.concat(newMessage)
-      this.setState({messages})
-    }, 5000);
+    // setTimeout(() => {
+    //   const newMessage = {id: 3, username: "Michelle", content: "Hello there!"};
+    //   const messages = this.state.messages.concat(newMessage)
+    //   this.setState({messages})
+    // }, 5000);
   }
 
   addMessage(event) {
@@ -46,7 +46,7 @@ class App extends Component {
       let messageObj = {username: this.state.currentUser.name, content: event.target.value};
       let messages = this.state.messages.concat(messageObj);
       this.setState({messages: messages});
-      appSocket.send(JSON.stringify(messageObj));
+      this.appSocket.send(JSON.stringify(messageObj));
       event.target.value = "";
     } else {
       console.log('butts');
