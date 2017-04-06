@@ -30,14 +30,17 @@ class App extends Component {
   }
 
   componentDidMount() {
-    // console.log("componentDidMount <App />");
+    var appSocket = new WebSocket("ws://localhost:3001");
+    console.log('new WebSocket created');
+    appSocket.onmessage= function(message){
+      console.log(message.data);
+    };
+
     setTimeout(() => {
-      // console.log("Simulating incoming message");
       const newMessage = {id: 3, username: "Michelle", content: "Hello there!"};
       const messages = this.state.messages.concat(newMessage)
-      // console.log(messages);
       this.setState({messages})
-    }, 500);
+    }, 5000);
   }
 
   render() {
