@@ -8,6 +8,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      clients: 0,
       currentUser: {name: "Bobby"},
       messages: []
     };
@@ -26,26 +27,39 @@ class App extends Component {
     this.appSocket.onmessage = (event) => {
       let parsed = JSON.parse(event.data);
       console.log('parsed: ', parsed);
+      let nextObj = {};
       switch(parsed.type) {
-        case: "message"
-          let nextObj = {
+        case "message":
+          nextObj = {
+            type: "message",
             timestamp: parsed.timestamp,
             username: parsed.username,
             content: parsed.content
           };
-          console.log('messages: ', messages);
-          this.setState({messages});
           break;
-        case: "notification"
-          let nextObj = {
-            oldName: parsed.oldName,
-            name: parsed.name
+        case "notification":
+          console.log('parsed is ', parsed);
+          nextObj = {
+            type: "notification",
+            timestamp: parsed.timestamp,
+            content: parsed.oldName.name + " changed their name to " + parsed.name
           }
           break;
+        case "clientCount":
+          console.log('parsed.value is ', parsed.value, ' and this.state.clients is ', this.state.clients)
+          newVal = (this.state.clients + parsed.value);
+          setState({clients: newVal})
+          break;
+        default:
+          throw new Error("Holy shite! Unknown event type " + parsed.type);
       }
       let messages = this.state.messages.concat(nextObj);
+      console.log('messages: ', messages);
+      this.setState({messages});
     };
   }
+
+
 
   changeUser(event) {
     if (event.key == 'Enter'){
@@ -59,7 +73,7 @@ class App extends Component {
   addMessage(event) {
     if (event.key=='Enter') {
       let messageObj = {
-        type: "message"
+        type: "message",
         username: this.state.currentUser.name,
         content: event.target.value
       };
@@ -73,6 +87,7 @@ class App extends Component {
   render() {
     return (
       <div>
+        <p id="clientCount">Currently {this.state.clients} of us</p>
         <MessageList messages={this.state.messages}></MessageList>
         <ChatBar changeUser={this.changeUser} addMessage={this.addMessage} currentUser={this.state.currentUser}></ChatBar>
       </div>

@@ -12,7 +12,9 @@ const wss = new SocketServer({ server });
 
 wss.on('connection', (ws) => {
   console.log('Client connected');
-  // ws.send("Yo yo yo");
+    let countUp = {type: "clientCount", value: 1};
+    console.log(countUp);
+    ws.send(JSON.stringify(countUp));
 
   ws.on('message', function incoming(message) {
     // Parse incoming message; add timestamp
@@ -30,7 +32,10 @@ wss.on('connection', (ws) => {
     });
   });
 
-  ws.on('close', () => console.log('Client disconnected'));
+  ws.on('close', () => {
+    console.log('Client disconnected');
+    ws.send(JSON.stringify({type: "clientCount", value: -1}));
+  });
 });
 
 

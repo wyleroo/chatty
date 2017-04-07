@@ -8,11 +8,9 @@ class MessageList extends React.Component {
     return (
       <main className="messages">
         {this.props.messages.map(function(message) {
-          return <Message key={message.timestamp} username={message.username} content={message.content}></Message>
+          return (<Message type={message.type} key={message.timestamp} username={message.username} content={message.content} oldName={message.oldName}></Message>)
           }
         )};
-        <div className="message system">
-        </div>
       </main>
     );
   }
