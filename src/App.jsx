@@ -26,29 +26,40 @@ class App extends Component {
     this.appSocket.onmessage = (event) => {
       let parsed = JSON.parse(event.data);
       console.log('parsed: ', parsed);
-      let messageObj = {
-        timestamp: parsed.timestamp,
-        username: parsed.username,
-        content: parsed.content
-      };
-      let messages = this.state.messages.concat(messageObj);
-      console.log('messages: ', messages);
-      this.setState({messages});
+      switch(parsed.type) {
+        case: "message"
+          let nextObj = {
+            timestamp: parsed.timestamp,
+            username: parsed.username,
+            content: parsed.content
+          };
+          console.log('messages: ', messages);
+          this.setState({messages});
+          break;
+        case: "notification"
+          let nextObj = {
+            oldName: parsed.oldName,
+            name: parsed.name
+          }
+          break;
+      }
+      let messages = this.state.messages.concat(nextObj);
     };
   }
 
   changeUser(event) {
-    console.log('Im gonna change the fucking user');
     if (event.key == 'Enter'){
-      console.log('me name is: ', event.target.value)
+      let eventObj = {type: "notification", oldName: this.state.currentUser, name: event.target.value}
+      console.log("eventObj: ", eventObj);
+      this.appSocket.send(JSON.stringify(eventObj));
       this.setState({currentUser: {name: event.target.value}});
-
     }
   }
 
   addMessage(event) {
     if (event.key=='Enter') {
       let messageObj = {
+        type: "message"
         username: this.state.currentUser.name,
         content: event.target.value
       };
