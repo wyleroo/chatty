@@ -82,9 +82,14 @@ class App extends Component {
   render() {
     return (
       <div>
-        <p id="clientCount">Currently {this.state.clients} of us</p>
+        <nav className="navbar">
+          <a className="navbar-brand">PeopleTalker</a>
+          <span id="clientCount">Currently {this.state.clients} of us</span>
+        </nav>
         <MessageList messages={this.state.messages}></MessageList>
-        <ChatBar changeUser={this.changeUser} addMessage={this.addMessage} currentUser={this.state.currentUser}></ChatBar>
+        <footer className="chatbar">
+          <ChatBar changeUser={this.changeUser} addMessage={this.addMessage} currentUser={this.state.currentUser}></ChatBar>
+        </footer>
       </div>
     );
   }

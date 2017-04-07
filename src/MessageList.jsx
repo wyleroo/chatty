@@ -10,7 +10,7 @@ class MessageList extends React.Component {
         {this.props.messages.map(function(message) {
           return (<Message type={message.type} key={message.timestamp} username={message.username} content={message.content} oldName={message.oldName}></Message>)
           }
-        )};
+        )}
       </main>
     );
   }
