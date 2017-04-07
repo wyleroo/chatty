@@ -26,8 +26,8 @@ class App extends Component {
 
     this.appSocket.onmessage = (event) => {
       let parsed = JSON.parse(event.data);
-      console.log('parsed: ', parsed);
       let nextObj = {};
+      let messages = [];
       switch(parsed.type) {
         case "message":
           nextObj = {
@@ -36,30 +36,27 @@ class App extends Component {
             username: parsed.username,
             content: parsed.content
           };
+          messages = this.state.messages.concat(nextObj);
+          this.setState({messages});
           break;
         case "notification":
-          console.log('parsed is ', parsed);
           nextObj = {
             type: "notification",
             timestamp: parsed.timestamp,
             content: parsed.oldName.name + " changed their name to " + parsed.name
           }
+          messages = this.state.messages.concat(nextObj);
+          this.setState({messages});
           break;
         case "clientCount":
-          console.log('parsed.value is ', parsed.value, ' and this.state.clients is ', this.state.clients)
-          newVal = (this.state.clients + parsed.value);
-          setState({clients: newVal})
+          this.setState({clients: (parsed.value)})
           break;
         default:
           throw new Error("Holy shite! Unknown event type " + parsed.type);
       }
-      let messages = this.state.messages.concat(nextObj);
       console.log('messages: ', messages);
-      this.setState({messages});
     };
   }
-
-
 
   changeUser(event) {
     if (event.key == 'Enter'){
@@ -79,8 +76,6 @@ class App extends Component {
       };
       this.appSocket.send(JSON.stringify(messageObj));
       event.target.value = "";
-    } else {
-      console.log('butts');
     }
   }
 

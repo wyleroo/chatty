@@ -10,18 +10,23 @@ const server = express()
 
 const wss = new SocketServer({ server });
 
+let clientCount = 0;
+
 wss.on('connection', (ws) => {
   console.log('Client connected');
-    let countUp = {type: "clientCount", value: 1};
-    console.log(countUp);
-    ws.send(JSON.stringify(countUp));
+  clientCount += 1;
+  wss.clients.forEach(function each(client) {
+    console.log(clientCount);
+    if (client.readyState == ws.OPEN) {
+      let upCount = JSON.stringify({type: "clientCount", value: clientCount});
+      client.send(upCount);
+    }
+  });
 
-  ws.on('message', function incoming(message) {
-    // Parse incoming message; add timestamp
+  ws.on('message', (message) => {
     let inMessage = JSON.parse(message);
     let timestamp = uuid();
     inMessage.timestamp = timestamp;
-    // Broadcast message to all connected clients. Stringify;
     wss.clients.forEach(function each(client) {
       if (client.readyState == ws.OPEN) {
         outMessage = JSON.stringify(inMessage);
@@ -33,8 +38,13 @@ wss.on('connection', (ws) => {
   });
 
   ws.on('close', () => {
-    console.log('Client disconnected');
-    ws.send(JSON.stringify({type: "clientCount", value: -1}));
+    clientCount -= 1;
+    wss.clients.forEach(function each(client) {
+      if (client.readyState == ws.OPEN) {
+        client.send(JSON.stringify({type: "clientCount", value: clientCount}));
+      }
+    console.log('Client disconnected. Client count: ', clientCount);
+    });
   });
 });
 
