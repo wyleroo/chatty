@@ -1,10 +1,6 @@
 import React from 'react';
 
 class ChatBar extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     return (
       <div className="chatbar">

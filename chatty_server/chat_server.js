@@ -16,21 +16,17 @@ wss.on('connection', (ws) => {
   console.log('Client connected');
   clientCount += 1;
   wss.clients.forEach(function each(client) {
-    console.log(clientCount);
     if (client.readyState == ws.OPEN) {
-      let upCount = JSON.stringify({type: "clientCount", value: clientCount});
-      client.send(upCount);
+      client.send(JSON.stringify({type: "clientCount", value: clientCount}));
     }
   });
 
   ws.on('message', (message) => {
     let inMessage = JSON.parse(message);
-    let timestamp = uuid();
-    inMessage.timestamp = timestamp;
+    inMessage.timestamp = uuid();
     wss.clients.forEach(function each(client) {
       if (client.readyState == ws.OPEN) {
-        outMessage = JSON.stringify(inMessage);
-        client.send(outMessage);
+        client.send(JSON.stringify(inMessage));
       } else {
         console.log('No connection. No socketserver. No nothin');
       }

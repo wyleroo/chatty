@@ -9,7 +9,7 @@ class App extends Component {
     super(props);
     this.state = {
       clients: 0,
-      currentUser: {name: "Bobby"},
+      currentUser: {name: "Anonymous"},
       messages: []
     };
     this.addMessage = this.addMessage.bind(this);
@@ -19,10 +19,6 @@ class App extends Component {
   componentDidMount() {
     this.appSocket = new WebSocket("ws://localhost:3001");
     console.log('new WebSocket created');
-
-    this.appSocket.onopen = (event) => {
-      // this.appSocket.send("I just connected to you!");
-    };
 
     this.appSocket.onmessage = (event) => {
       let parsed = JSON.parse(event.data);
@@ -60,8 +56,7 @@ class App extends Component {
 
   changeUser(event) {
     if (event.key == 'Enter'){
-      let eventObj = {type: "notification", oldName: this.state.currentUser, name: event.target.value}
-      console.log("eventObj: ", eventObj);
+      let eventObj = {type: "notification", oldName: this.state.currentUser, name: event.target.value};
       this.appSocket.send(JSON.stringify(eventObj));
       this.setState({currentUser: {name: event.target.value}});
     }
